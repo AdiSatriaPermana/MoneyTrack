@@ -1,6 +1,18 @@
 import { useState } from 'react'
+
 import { Link, useNavigate } from 'react-router-dom'
-import { Coins, ArrowUp, ArrowDown } from 'lucide-react'
+
+import {
+  Coins,
+  ArrowUp,
+  ArrowDown,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  UserRound,
+} from 'lucide-react'
+
 import { useAuth } from '../contexts/AuthContext'
 
 const FLOATING_MONEY = [
@@ -61,9 +73,16 @@ export default function Register() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  const [showPassword, setShowPassword] = useState(false)
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+
+  // =====================================================
+  // VALIDATION
+  // =====================================================
 
   function validate() {
     if (!name.trim()) {
@@ -82,6 +101,10 @@ export default function Register() {
 
     return ''
   }
+
+  // =====================================================
+  // REGISTER
+  // =====================================================
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -105,27 +128,59 @@ export default function Register() {
         password,
       })
 
+      // =================================================
+      // JIKA LANGSUNG MENDAPAT SESSION
+      // =================================================
+
       if (data.session) {
-        navigate('/dashboard', { replace: true })
-      } else {
-        setNotice(
-          'Akun berhasil dibuat. Silakan cek email kamu untuk konfirmasi sebelum masuk.'
+        sessionStorage.setItem(
+          'moneytrack_register_success',
+          'true'
         )
+
+        navigate('/dashboard', {
+          replace: true,
+        })
+
+        return
       }
+
+      // =================================================
+      // JIKA EMAIL VERIFICATION AKTIF
+      // =================================================
+
+      setNotice(
+        'Akun berhasil dibuat. Silakan cek email kamu untuk konfirmasi sebelum masuk.'
+      )
     } catch (err) {
-      const message = err.message?.toLowerCase() || ''
+      const message =
+        err.message?.toLowerCase() || ''
 
       if (
         message.includes('already registered') ||
-        message.includes('already been registered')
+        message.includes('already been registered') ||
+        message.includes('user already registered')
       ) {
         setError(
           'Email ini sudah terdaftar. Gunakan email lain atau masuk.'
         )
-      } else if (message.includes('fetch')) {
-        setError('Terjadi kesalahan koneksi. Coba lagi.')
+      } else if (
+        message.includes('password')
+      ) {
+        setError(
+          'Password tidak memenuhi persyaratan.'
+        )
+      } else if (
+        message.includes('fetch')
+      ) {
+        setError(
+          'Terjadi kesalahan koneksi. Coba lagi.'
+        )
       } else {
-        setError(err.message || 'Gagal membuat akun. Coba lagi.')
+        setError(
+          err.message ||
+            'Gagal membuat akun. Coba lagi.'
+        )
       }
     } finally {
       setLoading(false)
@@ -139,23 +194,35 @@ export default function Register() {
           FLOATING MONEY BACKGROUND
       ====================================================== */}
 
-      <div className="register-money-layer" aria-hidden="true">
+      <div
+        className="register-money-layer"
+        aria-hidden="true"
+      >
+
         {FLOATING_MONEY.map((money, index) => {
-          const isIncome = money.type === 'income'
+          const isIncome =
+            money.type === 'income'
 
           return (
             <div
               key={`${money.amount}-${index}`}
-              className={`register-money ${money.position} ${
-                isIncome
-                  ? 'register-money-income'
-                  : 'register-money-expense'
-              }`}
+              className={`
+                register-money
+                ${money.position}
+                ${
+                  isIncome
+                    ? 'register-money-income'
+                    : 'register-money-expense'
+                }
+              `}
               style={{
                 animationDelay: money.delay,
               }}
             >
-              <span>{money.amount}</span>
+
+              <span>
+                {money.amount}
+              </span>
 
               {isIncome ? (
                 <ArrowUp
@@ -168,17 +235,22 @@ export default function Register() {
                   strokeWidth={2.5}
                 />
               )}
+
             </div>
           )
         })}
 
-        {/* Decorative dots */}
+
+        {/* DECORATIVE DOTS */}
+
         <span className="register-dot register-dot-1" />
         <span className="register-dot register-dot-2" />
         <span className="register-dot register-dot-3" />
         <span className="register-dot register-dot-4" />
         <span className="register-dot register-dot-5" />
+
       </div>
+
 
       {/* =====================================================
           REGISTER CONTENT
@@ -186,22 +258,30 @@ export default function Register() {
 
       <div className="w-full max-w-sm relative z-10">
 
-        {/* LOGO */}
+        {/* ===================================================
+            LOGO
+        ==================================================== */}
 
         <Link
           to="/"
           className="
-            flex items-center justify-center gap-2
+            flex
+            items-center
+            justify-center
+            gap-2
             mb-8
             group
           "
         >
+
           <Coins
             className="
-              h-6 w-6
+              h-6
+              w-6
               text-forest-500
               dark:text-gold
-              transition-transform duration-300
+              transition-transform
+              duration-300
               group-hover:rotate-12
             "
             strokeWidth={2}
@@ -218,9 +298,13 @@ export default function Register() {
           >
             MoneyTrack
           </span>
+
         </Link>
 
-        {/* CARD */}
+
+        {/* ===================================================
+            CARD
+        ==================================================== */}
 
         <div
           className="
@@ -232,6 +316,9 @@ export default function Register() {
             dark:bg-[#19241F]/95
           "
         >
+
+          {/* TITLE */}
+
           <h1
             className="
               font-display
@@ -254,13 +341,22 @@ export default function Register() {
             Mulai catat pemasukan dan pengeluaranmu hari ini.
           </p>
 
+
+          {/* =================================================
+              FORM
+          ================================================== */}
+
           <form
             onSubmit={handleSubmit}
             className="space-y-4"
           >
-            {/* NAMA */}
+
+            {/* =================================================
+                NAMA
+            ================================================== */}
 
             <div>
+
               <label
                 className="label"
                 htmlFor="name"
@@ -268,20 +364,49 @@ export default function Register() {
                 Nama
               </label>
 
-              <input
-                id="name"
-                type="text"
-                autoComplete="name"
-                className="input"
-                placeholder="Nama kamu"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+              <div className="relative">
+
+                <UserRound
+                  className="
+                    absolute
+                    left-3.5
+                    top-1/2
+                    -translate-y-1/2
+                    h-4.5
+                    w-4.5
+                    text-ink-soft
+                    pointer-events-none
+                  "
+                  strokeWidth={2}
+                />
+
+                <input
+                  id="name"
+                  type="text"
+                  autoComplete="name"
+                  className="
+                    input
+                    pl-10
+                  "
+                  placeholder="Nama kamu"
+                  value={name}
+                  onChange={(e) =>
+                    setName(e.target.value)
+                  }
+                  required
+                />
+
+              </div>
+
             </div>
 
-            {/* EMAIL */}
+
+            {/* =================================================
+                EMAIL
+            ================================================== */}
 
             <div>
+
               <label
                 className="label"
                 htmlFor="email"
@@ -289,20 +414,49 @@ export default function Register() {
                 Email
               </label>
 
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                className="input"
-                placeholder="nama@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <div className="relative">
+
+                <Mail
+                  className="
+                    absolute
+                    left-3.5
+                    top-1/2
+                    -translate-y-1/2
+                    h-4.5
+                    w-4.5
+                    text-ink-soft
+                    pointer-events-none
+                  "
+                  strokeWidth={2}
+                />
+
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  className="
+                    input
+                    pl-10
+                  "
+                  placeholder="nama@email.com"
+                  value={email}
+                  onChange={(e) =>
+                    setEmail(e.target.value)
+                  }
+                  required
+                />
+
+              </div>
+
             </div>
 
-            {/* PASSWORD */}
+
+            {/* =================================================
+                PASSWORD
+            ================================================== */}
 
             <div>
+
               <label
                 className="label"
                 htmlFor="password"
@@ -310,18 +464,113 @@ export default function Register() {
                 Password
               </label>
 
-              <input
-                id="password"
-                type="password"
-                autoComplete="new-password"
-                className="input"
-                placeholder="Minimal 6 karakter"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative">
+
+                {/* ICON GEMBOK */}
+
+                <Lock
+                  className="
+                    absolute
+                    left-3.5
+                    top-1/2
+                    -translate-y-1/2
+                    h-4.5
+                    w-4.5
+                    text-ink-soft
+                    pointer-events-none
+                  "
+                  strokeWidth={2}
+                />
+
+
+                {/* INPUT PASSWORD */}
+
+                <input
+                  id="password"
+                  type={
+                    showPassword
+                      ? 'text'
+                      : 'password'
+                  }
+                  autoComplete="new-password"
+                  className="
+                    input
+                    pl-10
+                    pr-11
+                  "
+                  placeholder="Minimal 6 karakter"
+                  value={password}
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
+                  required
+                />
+
+
+                {/* SHOW / HIDE PASSWORD */}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword(
+                      (prev) => !prev
+                    )
+                  }
+                  className="
+                    absolute
+                    right-3
+                    top-1/2
+                    -translate-y-1/2
+                    text-ink-soft
+                    hover:text-forest-500
+                    dark:hover:text-gold
+                    transition-colors
+                  "
+                  aria-label={
+                    showPassword
+                      ? 'Sembunyikan password'
+                      : 'Tampilkan password'
+                  }
+                >
+
+                  {showPassword ? (
+                    <EyeOff
+                      className="h-4.5 w-4.5"
+                      strokeWidth={2}
+                    />
+                  ) : (
+                    <Eye
+                      className="h-4.5 w-4.5"
+                      strokeWidth={2}
+                    />
+                  )}
+
+                </button>
+
+              </div>
+
             </div>
 
-            {/* ERROR */}
+
+            {/* =================================================
+                PASSWORD INFO
+            ================================================== */}
+
+            <p
+              className="
+                text-xs
+                text-ink-soft
+                dark:text-white/50
+                -mt-1
+              "
+            >
+              Gunakan minimal 6 karakter untuk password.
+            </p>
+
+
+            {/* =================================================
+                ERROR
+            ================================================== */}
 
             {error && (
               <p
@@ -338,7 +587,10 @@ export default function Register() {
               </p>
             )}
 
-            {/* NOTICE */}
+
+            {/* =================================================
+                NOTICE
+            ================================================== */}
 
             {notice && (
               <p
@@ -355,7 +607,10 @@ export default function Register() {
               </p>
             )}
 
-            {/* BUTTON */}
+
+            {/* =================================================
+                REGISTER BUTTON
+            ================================================== */}
 
             <button
               type="submit"
@@ -367,13 +622,24 @@ export default function Register() {
                 duration-200
                 hover:-translate-y-0.5
                 hover:shadow-md
+                disabled:opacity-60
+                disabled:cursor-not-allowed
+                disabled:hover:translate-y-0
               "
             >
-              {loading ? 'Memproses…' : 'Daftar'}
+
+              {loading
+                ? 'Memproses…'
+                : 'Daftar'}
+
             </button>
+
           </form>
 
-          {/* LOGIN LINK */}
+
+          {/* =================================================
+              LOGIN LINK
+          ================================================== */}
 
           <p
             className="
@@ -384,6 +650,7 @@ export default function Register() {
               mt-6
             "
           >
+
             Sudah punya akun?{' '}
 
             <Link
@@ -397,9 +664,13 @@ export default function Register() {
             >
               Masuk
             </Link>
+
           </p>
+
         </div>
+
       </div>
+
     </div>
   )
 }

@@ -14,6 +14,7 @@ import TransactionTypePage from './pages/TransactionTypePage'
 import Statistics from './pages/Statistics'
 import Profile from './pages/Profile'
 import Calendar from './pages/Calendar'
+import Reports from './pages/Reports'
 
 export default function App() {
   return (
@@ -24,7 +25,7 @@ export default function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-
+            
             <Route
               path="/dashboard"
               element={
@@ -85,6 +86,16 @@ export default function App() {
             />
             
             <Route path="*" element={<Navigate to="/" replace />} />
+
+              <Route
+  path="/laporan"
+  element={
+    <ProtectedRoute>
+      <Reports />
+    </ProtectedRoute>
+  }
+/>
+
           </Routes>
 
           <Analytics />

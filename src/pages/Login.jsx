@@ -4,7 +4,14 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   Coins,
   ArrowRight,
+  TrendingUp,
+  TrendingDown,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
 } from 'lucide-react'
+
 import { useAuth } from '../contexts/AuthContext'
 
 export default function Login() {
@@ -14,6 +21,7 @@ export default function Login() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -46,7 +54,8 @@ export default function Login() {
     })
   }
 
-  const from = location.state?.from?.pathname || '/dashboard'
+  const from =
+    location.state?.from?.pathname || '/dashboard'
 
   // =====================================================
   // LOGIN
@@ -54,6 +63,7 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+
     setError('')
 
     if (!email || !password) {
@@ -69,14 +79,13 @@ export default function Login() {
         password,
       })
 
+      // Simpan tanda login berhasil
+      // supaya halaman berikutnya bisa menampilkan
+      // notification setelah Login di-unmount.
       sessionStorage.setItem(
-  'moneytrack_login_success',
-  'true'
-)
-
-navigate(from, {
-  replace: true,
-})
+        'moneytrack_login_success',
+        'true'
+      )
 
       // =================================================
       // NOTIF BERHASIL LOGIN
@@ -88,7 +97,8 @@ navigate(from, {
         'Selamat datang kembali di MoneyTrack.'
       )
 
-      // Kasih waktu notif terlihat sebelum pindah halaman
+      // Beri waktu notification terlihat
+      // sebelum pindah halaman.
       setTimeout(() => {
         navigate(from, {
           replace: true,
@@ -96,18 +106,21 @@ navigate(from, {
       }, 1200)
 
     } catch (err) {
+      const message =
+        err.message?.toLowerCase() || ''
+
       if (
-        err.message
-          ?.toLowerCase()
-          .includes('invalid login credentials')
+        message.includes(
+          'invalid login credentials'
+        )
       ) {
         setError('Email atau password salah.')
       } else if (
-        err.message
-          ?.toLowerCase()
-          .includes('fetch')
+        message.includes('fetch')
       ) {
-        setError('Terjadi kesalahan koneksi. Coba lagi.')
+        setError(
+          'Terjadi kesalahan koneksi. Coba lagi.'
+        )
       } else {
         setError('Email atau password salah.')
       }
@@ -218,6 +231,7 @@ navigate(from, {
           to="/"
           className="login-logo"
         >
+
           <Coins
             className="login-logo-icon"
             strokeWidth={2}
@@ -226,6 +240,7 @@ navigate(from, {
           <span className="font-display font-semibold">
             MoneyTrack
           </span>
+
         </Link>
 
 
@@ -255,9 +270,12 @@ navigate(from, {
             className="space-y-4"
           >
 
-            {/* EMAIL */}
+            {/* =================================================
+                EMAIL
+            ================================================== */}
 
             <div>
+
               <label
                 className="label"
                 htmlFor="email"
@@ -265,21 +283,49 @@ navigate(from, {
                 Email
               </label>
 
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                className="input"
-                placeholder="nama@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <div className="relative">
+
+                <Mail
+                  className="
+                    absolute
+                    left-3.5
+                    top-1/2
+                    -translate-y-1/2
+                    h-4.5
+                    w-4.5
+                    text-ink-soft
+                    pointer-events-none
+                  "
+                  strokeWidth={2}
+                />
+
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) =>
+                    setEmail(e.target.value)
+                  }
+                  placeholder="nama@email.com"
+                  className="
+                    input
+                    pl-10
+                  "
+                  required
+                />
+
+              </div>
+
             </div>
 
 
-            {/* PASSWORD */}
+            {/* =================================================
+                PASSWORD
+            ================================================== */}
 
             <div>
+
               <label
                 className="label"
                 htmlFor="password"
@@ -287,34 +333,128 @@ navigate(from, {
                 Password
               </label>
 
-              <input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                className="input"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative">
+
+                {/* ICON GEMBOK */}
+
+                <Lock
+                  className="
+                    absolute
+                    left-3.5
+                    top-1/2
+                    -translate-y-1/2
+                    h-4.5
+                    w-4.5
+                    text-ink-soft
+                    pointer-events-none
+                  "
+                  strokeWidth={2}
+                />
+
+
+                {/* INPUT PASSWORD */}
+
+                <input
+                  id="password"
+                  type={
+                    showPassword
+                      ? 'text'
+                      : 'password'
+                  }
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
+                  placeholder="Masukkan password"
+                  className="
+                    input
+                    pl-10
+                    pr-11
+                  "
+                  required
+                />
+
+
+                {/* SHOW / HIDE PASSWORD */}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword(
+                      (prev) => !prev
+                    )
+                  }
+                  className="
+                    absolute
+                    right-3
+                    top-1/2
+                    -translate-y-1/2
+                    text-ink-soft
+                    hover:text-forest-500
+                    dark:hover:text-gold
+                    transition-colors
+                  "
+                  aria-label={
+                    showPassword
+                      ? 'Sembunyikan password'
+                      : 'Tampilkan password'
+                  }
+                >
+
+                  {showPassword ? (
+                    <EyeOff
+                      className="h-4.5 w-4.5"
+                      strokeWidth={2}
+                    />
+                  ) : (
+                    <Eye
+                      className="h-4.5 w-4.5"
+                      strokeWidth={2}
+                    />
+                  )}
+
+                </button>
+
+              </div>
+
             </div>
 
 
-            {/* ERROR */}
+            {/* =================================================
+                ERROR
+            ================================================== */}
 
             {error && (
-              <p className="text-sm text-loss bg-loss-soft rounded-lg px-3.5 py-2.5">
+              <p
+                className="
+                  text-sm
+                  text-loss
+                  bg-loss-soft
+                  rounded-lg
+                  px-3.5
+                  py-2.5
+                "
+              >
                 {error}
               </p>
             )}
 
 
-            {/* LOGIN BUTTON */}
+            {/* =================================================
+                LOGIN BUTTON
+            ================================================== */}
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary login-submit w-full"
+              className="
+                btn-primary
+                login-submit
+                w-full
+              "
             >
+
               {loading ? (
                 'Memproses…'
               ) : (
@@ -327,6 +467,7 @@ navigate(from, {
                   />
                 </>
               )}
+
             </button>
 
           </form>
@@ -337,14 +478,21 @@ navigate(from, {
           ================================================== */}
 
           <p className="text-sm text-ink-soft text-center mt-6">
+
             Belum punya akun?{' '}
 
             <Link
               to="/register"
-              className="text-forest-500 dark:text-gain font-semibold hover:underline"
+              className="
+                text-forest-500
+                dark:text-gain
+                font-semibold
+                hover:underline
+              "
             >
               Daftar sekarang
             </Link>
+
           </p>
 
         </div>
