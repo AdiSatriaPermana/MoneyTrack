@@ -4,8 +4,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   Coins,
   ArrowRight,
-  TrendingUp,
-  TrendingDown,
   Mail,
   Lock,
   Eye,
@@ -66,7 +64,9 @@ export default function Login() {
 
     setError('')
 
-    if (!email || !password) {
+    const trimmedEmail = email.trim()
+
+    if (!trimmedEmail || !password) {
       setError('Email dan password wajib diisi.')
       return
     }
@@ -75,21 +75,16 @@ export default function Login() {
 
     try {
       await signIn({
-        email,
+        email: trimmedEmail,
         password,
       })
 
       // Simpan tanda login berhasil
-      // supaya halaman berikutnya bisa menampilkan
-      // notification setelah Login di-unmount.
+      // agar notification bisa diteruskan ke halaman berikutnya.
       sessionStorage.setItem(
         'moneytrack_login_success',
         'true'
       )
-
-      // =================================================
-      // NOTIF BERHASIL LOGIN
-      // =================================================
 
       showNotification(
         'success',
@@ -104,10 +99,9 @@ export default function Login() {
           replace: true,
         })
       }, 1200)
-
     } catch (err) {
       const message =
-        err.message?.toLowerCase() || ''
+        err?.message?.toLowerCase() || ''
 
       if (
         message.includes(
@@ -116,13 +110,16 @@ export default function Login() {
       ) {
         setError('Email atau password salah.')
       } else if (
-        message.includes('fetch')
+        message.includes('fetch') ||
+        message.includes('network')
       ) {
         setError(
           'Terjadi kesalahan koneksi. Coba lagi.'
         )
       } else {
-        setError('Email atau password salah.')
+        setError(
+          'Email atau password salah.'
+        )
       }
     } finally {
       setLoading(false)
@@ -131,7 +128,6 @@ export default function Login() {
 
   return (
     <div className="login-page">
-
       {/* =====================================================
           NOTIFICATION
       ====================================================== */}
@@ -144,7 +140,6 @@ export default function Login() {
           onClose={closeNotification}
         />
       )}
-
 
       {/* =====================================================
           BACKGROUND GLOW
@@ -160,7 +155,6 @@ export default function Login() {
         aria-hidden="true"
       />
 
-
       {/* =====================================================
           FLOATING MONEY
       ====================================================== */}
@@ -169,9 +163,6 @@ export default function Login() {
         className="login-money-layer"
         aria-hidden="true"
       >
-
-        {/* NOMINAL UANG */}
-
         <span className="login-money income login-money-1">
           Rp250.000 ↑
         </span>
@@ -204,25 +195,19 @@ export default function Login() {
           − Rp125.000 ↓
         </span>
 
-
-        {/* TITIK-TITIK KECIL */}
-
         <span className="login-money-dot login-dot-1" />
         <span className="login-money-dot login-dot-2" />
         <span className="login-money-dot login-dot-3" />
         <span className="login-money-dot login-dot-4" />
         <span className="login-money-dot login-dot-5" />
         <span className="login-money-dot login-dot-6" />
-
       </div>
-
 
       {/* =====================================================
           MAIN CONTENT
       ====================================================== */}
 
       <div className="login-content">
-
         {/* ===================================================
             LOGO
         ==================================================== */}
@@ -230,8 +215,8 @@ export default function Login() {
         <Link
           to="/"
           className="login-logo"
+          aria-label="Kembali ke halaman utama MoneyTrack"
         >
-
           <Coins
             className="login-logo-icon"
             strokeWidth={2}
@@ -240,26 +225,25 @@ export default function Login() {
           <span className="font-display font-semibold">
             MoneyTrack
           </span>
-
         </Link>
-
 
         {/* ===================================================
             LOGIN CARD
         ==================================================== */}
 
-        <div className="card login-card p-6 sm:p-8">
-
+        <div className="card login-card p-5 sm:p-8">
           {/* TITLE */}
 
-          <h1 className="font-display text-2xl font-semibold mb-1">
-            Selamat datang kembali
-          </h1>
+          <div className="mb-6">
+            <h1 className="font-display text-2xl sm:text-[26px] font-semibold leading-tight">
+              Selamat datang kembali
+            </h1>
 
-          <p className="text-sm text-ink-soft mb-6">
-            Masuk untuk melanjutkan pencatatan keuanganmu.
-          </p>
-
+            <p className="text-sm text-ink-soft mt-1.5 leading-relaxed">
+              Masuk untuk melanjutkan pencatatan
+              keuanganmu.
+            </p>
+          </div>
 
           {/* =================================================
               FORM
@@ -269,13 +253,11 @@ export default function Login() {
             onSubmit={handleSubmit}
             className="space-y-4"
           >
-
             {/* =================================================
                 EMAIL
             ================================================== */}
 
             <div>
-
               <label
                 className="label"
                 htmlFor="email"
@@ -284,7 +266,6 @@ export default function Login() {
               </label>
 
               <div className="relative">
-
                 <Mail
                   className="
                     absolute
@@ -304,28 +285,29 @@ export default function Login() {
                   type="email"
                   autoComplete="email"
                   value={email}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setEmail(e.target.value)
-                  }
+
+                    if (error) {
+                      setError('')
+                    }
+                  }}
                   placeholder="nama@email.com"
                   className="
                     input
                     pl-10
                   "
+                  disabled={loading}
                   required
                 />
-
               </div>
-
             </div>
-
 
             {/* =================================================
                 PASSWORD
             ================================================== */}
 
             <div>
-
               <label
                 className="label"
                 htmlFor="password"
@@ -334,9 +316,6 @@ export default function Login() {
               </label>
 
               <div className="relative">
-
-                {/* ICON GEMBOK */}
-
                 <Lock
                   className="
                     absolute
@@ -351,9 +330,6 @@ export default function Login() {
                   strokeWidth={2}
                 />
 
-
-                {/* INPUT PASSWORD */}
-
                 <input
                   id="password"
                   type={
@@ -363,18 +339,22 @@ export default function Login() {
                   }
                   autoComplete="current-password"
                   value={password}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setPassword(e.target.value)
-                  }
+
+                    if (error) {
+                      setError('')
+                    }
+                  }}
                   placeholder="Masukkan password"
                   className="
                     input
                     pl-10
-                    pr-11
+                    pr-12
                   "
+                  disabled={loading}
                   required
                 />
-
 
                 {/* SHOW / HIDE PASSWORD */}
 
@@ -385,15 +365,24 @@ export default function Login() {
                       (prev) => !prev
                     )
                   }
+                  disabled={loading}
                   className="
                     absolute
-                    right-3
+                    right-1
                     top-1/2
                     -translate-y-1/2
+                    h-9
+                    w-9
+                    rounded-lg
+                    flex
+                    items-center
+                    justify-center
                     text-ink-soft
                     hover:text-forest-500
+                    hover:bg-paper
                     dark:hover:text-gold
                     transition-colors
+                    disabled:opacity-50
                   "
                   aria-label={
                     showPassword
@@ -401,7 +390,6 @@ export default function Login() {
                       : 'Tampilkan password'
                   }
                 >
-
                   {showPassword ? (
                     <EyeOff
                       className="h-4.5 w-4.5"
@@ -413,33 +401,31 @@ export default function Login() {
                       strokeWidth={2}
                     />
                   )}
-
                 </button>
-
               </div>
-
             </div>
-
 
             {/* =================================================
                 ERROR
             ================================================== */}
 
             {error && (
-              <p
+              <div
+                role="alert"
                 className="
+                  rounded-xl
+                  bg-loss-soft
+                  px-3.5
+                  py-3
                   text-sm
                   text-loss
-                  bg-loss-soft
-                  rounded-lg
-                  px-3.5
-                  py-2.5
+                  border
+                  border-loss/10
                 "
               >
                 {error}
-              </p>
+              </div>
             )}
-
 
             {/* =================================================
                 LOGIN BUTTON
@@ -452,11 +438,25 @@ export default function Login() {
                 btn-primary
                 login-submit
                 w-full
+                min-h-11
               "
             >
-
               {loading ? (
-                'Memproses…'
+                <>
+                  <span
+                    className="
+                      h-4
+                      w-4
+                      rounded-full
+                      border-2
+                      border-white/40
+                      border-t-white
+                      animate-spin
+                    "
+                  />
+
+                  Memproses…
+                </>
               ) : (
                 <>
                   Masuk
@@ -467,38 +467,39 @@ export default function Login() {
                   />
                 </>
               )}
-
             </button>
-
           </form>
-
 
           {/* =================================================
               REGISTER
           ================================================== */}
 
-          <p className="text-sm text-ink-soft text-center mt-6">
+          <div className="mt-6 pt-5 border-t border-paper-line">
+            <p className="text-sm text-ink-soft text-center">
+              Belum punya akun?{' '}
 
-            Belum punya akun?{' '}
-
-            <Link
-              to="/register"
-              className="
-                text-forest-500
-                dark:text-gain
-                font-semibold
-                hover:underline
-              "
-            >
-              Daftar sekarang
-            </Link>
-
-          </p>
-
+              <Link
+                to="/register"
+                className="
+                  text-forest-500
+                  dark:text-gain
+                  font-semibold
+                  hover:underline
+                  underline-offset-2
+                "
+              >
+                Daftar sekarang
+              </Link>
+            </p>
+          </div>
         </div>
 
-      </div>
+        {/* SMALL FOOTER */}
 
+        <p className="text-[11px] text-ink-soft/70 text-center mt-4">
+          Kelola keuanganmu dengan lebih sederhana.
+        </p>
+      </div>
     </div>
   )
 }

@@ -563,11 +563,13 @@ function handleExportCSV() {
   return (
     <AppShell>
       <div className="space-y-6">
+
         {/* HEADER */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <FileText className="h-5 w-5 text-forest-500 dark:text-gold" />
+
               <h1 className="font-display text-2xl font-semibold">
                 Laporan
               </h1>
@@ -577,40 +579,48 @@ function handleExportCSV() {
               Buat dan export laporan keuanganmu.
             </p>
           </div>
-<div className="flex flex-col sm:flex-row gap-2">
-  <button
-    onClick={handleExportPDF}
-    disabled={
-      loading ||
-      filteredTransactions.length === 0
-    }
-    className="btn-primary inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-  >
-    <FileText className="h-4 w-4" />
-    Export PDF
-  </button>
 
-  <button
-    onClick={handleExportCSV}
-    disabled={
-      loading ||
-      filteredTransactions.length === 0
-    }
-    className="btn-secondary inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-  >
-    <Download className="h-4 w-4" />
-    CSV
-  </button>
-</div>
+          <div className="grid grid-cols-2 sm:flex gap-2">
+            <button
+              onClick={handleExportPDF}
+              disabled={
+                loading ||
+                filteredTransactions.length === 0
+              }
+              className="btn-primary inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <FileText className="h-4 w-4" />
+              Export PDF
+            </button>
+
+            <button
+              onClick={handleExportCSV}
+              disabled={
+                loading ||
+                filteredTransactions.length === 0
+              }
+              className="btn-secondary inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Download className="h-4 w-4" />
+              CSV
+            </button>
+          </div>
         </div>
 
         {/* FILTER */}
         <div className="card p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-4">
-            <CalendarDays className="h-4.5 w-4.5 text-forest-500 dark:text-gold" />
-            <h2 className="font-display font-semibold">
-              Periode Laporan
-            </h2>
+            <CalendarDays className="h-4 w-4 text-forest-500 dark:text-gold" />
+
+            <div>
+              <h2 className="font-display font-semibold">
+                Periode Laporan
+              </h2>
+
+              <p className="text-xs text-ink-soft mt-0.5">
+                Pilih rentang waktu laporan.
+              </p>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -619,9 +629,9 @@ function handleExportCSV() {
                 key={item.key}
                 type="button"
                 onClick={() => setPeriod(item.key)}
-                className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors ${
+                className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition-all ${
                   period === item.key
-                    ? 'border-forest-500 bg-forest-50 text-forest-500 dark:border-gold dark:bg-gold/10 dark:text-gold'
+                    ? 'border-forest-500 bg-forest-50 text-forest-500 shadow-sm dark:border-gold dark:bg-gold/10 dark:text-gold'
                     : 'border-paper-line bg-paper-card text-ink-soft hover:text-ink hover:border-forest-300 dark:border-white/10 dark:hover:border-white/20'
                 }`}
               >
@@ -674,18 +684,17 @@ function handleExportCSV() {
 
           {selectedDates.start &&
             selectedDates.end && (
-              <p className="text-xs text-ink-soft mt-4">
-                Periode:{' '}
-                <span className="font-medium text-ink">
-                  {formatDateDisplay(
-                    selectedDates.start
-                  )}{' '}
-                  —{' '}
-                  {formatDateDisplay(
-                    selectedDates.end
-                  )}
-                </span>
-              </p>
+              <div className="mt-4 rounded-xl bg-paper px-3 py-2.5 dark:bg-white/5">
+                <p className="text-xs text-ink-soft">
+                  Periode laporan
+                </p>
+
+                <p className="text-sm font-medium mt-0.5">
+                  {formatDateDisplay(selectedDates.start)}
+                  {' — '}
+                  {formatDateDisplay(selectedDates.end)}
+                </p>
+              </div>
             )}
         </div>
 
@@ -697,140 +706,202 @@ function handleExportCSV() {
         )}
 
         {/* SUMMARY */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="card p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-ink-soft">
-                Pemasukan
-              </span>
+        <div>
+          <div className="flex items-end justify-between gap-3 mb-4">
+            <div>
+              <h2 className="font-display text-base sm:text-lg font-semibold">
+                Ringkasan Keuangan
+              </h2>
 
-              <div className="h-9 w-9 rounded-xl bg-gain-soft flex items-center justify-center">
-                <TrendingUp className="h-4.5 w-4.5 text-gain" />
-              </div>
+              <p className="text-xs sm:text-sm text-ink-soft mt-1">
+                Gambaran transaksi pada periode yang dipilih.
+              </p>
             </div>
 
-            <p className="font-display text-xl font-semibold text-gain">
-              {formatIDR(summary.income)}
-            </p>
+            <span className="hidden sm:inline-flex rounded-full bg-paper px-3 py-1 text-xs text-ink-soft dark:bg-white/5">
+              {summary.count} transaksi
+            </span>
           </div>
 
-          <div className="card p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-ink-soft">
-                Pengeluaran
-              </span>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
 
-              <div className="h-9 w-9 rounded-xl bg-loss-soft flex items-center justify-center">
-                <TrendingDown className="h-4.5 w-4.5 text-loss" />
+            {/* PEMASUKAN */}
+            <div className="card p-4 sm:p-5">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <span className="text-xs sm:text-sm text-ink-soft">
+                  Pemasukan
+                </span>
+
+                <div className="h-8 w-8 sm:h-9 sm:w-9 shrink-0 rounded-xl bg-gain-soft flex items-center justify-center">
+                  <TrendingUp className="h-4 w-4 text-gain" />
+                </div>
               </div>
+
+              <p className="font-display text-base sm:text-xl font-semibold text-gain break-words">
+                {formatIDR(summary.income)}
+              </p>
+
+              <p className="text-[10px] sm:text-xs text-ink-soft mt-1.5">
+                Uang masuk
+              </p>
             </div>
 
-            <p className="font-display text-xl font-semibold text-loss">
-              {formatIDR(summary.expense)}
-            </p>
-          </div>
+            {/* PENGELUARAN */}
+            <div className="card p-4 sm:p-5">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <span className="text-xs sm:text-sm text-ink-soft">
+                  Pengeluaran
+                </span>
 
-          <div className="card p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-ink-soft">
-                Saldo Bersih
-              </span>
-
-              <div className="h-9 w-9 rounded-xl bg-forest-50 dark:bg-white/5 flex items-center justify-center">
-                <Wallet className="h-4.5 w-4.5 text-forest-500 dark:text-gold" />
+                <div className="h-8 w-8 sm:h-9 sm:w-9 shrink-0 rounded-xl bg-loss-soft flex items-center justify-center">
+                  <TrendingDown className="h-4 w-4 text-loss" />
+                </div>
               </div>
+
+              <p className="font-display text-base sm:text-xl font-semibold text-loss break-words">
+                {formatIDR(summary.expense)}
+              </p>
+
+              <p className="text-[10px] sm:text-xs text-ink-soft mt-1.5">
+                Uang keluar
+              </p>
             </div>
 
-            <p
-              className={`font-display text-xl font-semibold ${
-                summary.balance >= 0
-                  ? 'text-gain'
-                  : 'text-loss'
-              }`}
-            >
-              {formatIDR(summary.balance)}
-            </p>
-          </div>
+            {/* SALDO */}
+            <div className="card p-4 sm:p-5">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <span className="text-xs sm:text-sm text-ink-soft">
+                  Saldo Bersih
+                </span>
 
-          <div className="card p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-ink-soft">
-                Transaksi
-              </span>
-
-              <div className="h-9 w-9 rounded-xl bg-paper dark:bg-white/5 flex items-center justify-center">
-                <Receipt className="h-4.5 w-4.5 text-ink-soft" />
+                <div className="h-8 w-8 sm:h-9 sm:w-9 shrink-0 rounded-xl bg-forest-50 flex items-center justify-center dark:bg-white/5">
+                  <Wallet className="h-4 w-4 text-forest-500 dark:text-gold" />
+                </div>
               </div>
+
+              <p
+                className={`font-display text-base sm:text-xl font-semibold break-words ${
+                  summary.balance >= 0
+                    ? 'text-gain'
+                    : 'text-loss'
+                }`}
+              >
+                {formatIDR(summary.balance)}
+              </p>
+
+              <p className="text-[10px] sm:text-xs text-ink-soft mt-1.5">
+                Pemasukan − pengeluaran
+              </p>
             </div>
 
-            <p className="font-display text-xl font-semibold">
-              {summary.count}
-            </p>
+            {/* TRANSAKSI */}
+            <div className="card p-4 sm:p-5">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <span className="text-xs sm:text-sm text-ink-soft">
+                  Transaksi
+                </span>
+
+                <div className="h-8 w-8 sm:h-9 sm:w-9 shrink-0 rounded-xl bg-paper flex items-center justify-center dark:bg-white/5">
+                  <Receipt className="h-4 w-4 text-ink-soft" />
+                </div>
+              </div>
+
+              <p className="font-display text-xl sm:text-2xl font-semibold">
+                {summary.count}
+              </p>
+
+              <p className="text-[10px] sm:text-xs text-ink-soft mt-1.5">
+                Total transaksi
+              </p>
+            </div>
           </div>
         </div>
 
         {/* EXPENSE CATEGORY */}
-        <div className="card p-5 sm:p-6">
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <h2 className="font-display font-semibold">
-                Pengeluaran berdasarkan kategori
-              </h2>
+        <div className="card overflow-hidden">
+          <div className="p-5 sm:p-6 border-b border-paper-line dark:border-white/10">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-xl bg-loss-soft flex items-center justify-center">
+                    <TrendingDown className="h-4 w-4 text-loss" />
+                  </div>
 
-              <p className="text-xs text-ink-soft mt-1">
-                Kategori dengan pengeluaran terbesar
-              </p>
+                  <h2 className="font-display font-semibold">
+                    Pengeluaran berdasarkan kategori
+                  </h2>
+                </div>
+
+                <p className="text-xs text-ink-soft mt-2 ml-10">
+                  Kategori dengan pengeluaran terbesar pada periode ini.
+                </p>
+              </div>
+
+              {expenseByCategory.length > 0 && (
+                <span className="hidden sm:inline-flex rounded-full bg-paper px-3 py-1 text-xs text-ink-soft dark:bg-white/5 whitespace-nowrap">
+                  {expenseByCategory.length} kategori
+                </span>
+              )}
             </div>
           </div>
 
           {expenseByCategory.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-sm text-ink-soft">
-                Belum ada pengeluaran pada periode ini.
+            <div className="px-5 py-10 sm:py-12 text-center">
+              <div className="h-12 w-12 mx-auto rounded-2xl bg-paper flex items-center justify-center dark:bg-white/5 mb-3">
+                <TrendingDown className="h-5 w-5 text-ink-soft/50" />
+              </div>
+
+              <p className="text-sm font-medium">
+                Belum ada pengeluaran
+              </p>
+
+              <p className="text-xs text-ink-soft mt-1 max-w-xs mx-auto">
+                Tidak ada data pengeluaran pada periode yang dipilih.
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {expenseByCategory.map(
-                (category, index) => {
-                  const percentage =
-                    summary.expense > 0
-                      ? (category.amount /
-                          summary.expense) *
-                        100
-                      : 0
+            <div className="p-5 sm:p-6 space-y-5">
+              {expenseByCategory.map((category, index) => {
+                const percentage =
+                  summary.expense > 0
+                    ? (category.amount / summary.expense) * 100
+                    : 0
 
-                  return (
-                    <div key={category.name}>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm font-medium">
-                          {index + 1}. {category.name}
+                return (
+                  <div key={category.name}>
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-paper text-[11px] font-semibold text-ink-soft dark:bg-white/5">
+                          {index + 1}
                         </span>
 
-                        <span className="text-sm text-ink-soft">
-                          {formatIDR(
-                            category.amount
-                          )}
+                        <span className="text-sm font-medium truncate">
+                          {category.name}
                         </span>
                       </div>
 
-                      <div className="h-2 rounded-full bg-paper dark:bg-white/10 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-forest-500 dark:bg-gold transition-all duration-500"
-                          style={{
-                            width: `${percentage}%`,
-                          }}
-                        />
-                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-medium">
+                          {formatIDR(category.amount)}
+                        </p>
 
-                      <p className="text-[11px] text-ink-soft mt-1">
-                        {percentage.toFixed(1)}% dari
-                        total pengeluaran
-                      </p>
+                        <p className="text-[10px] text-ink-soft">
+                          {percentage.toFixed(1)}%
+                        </p>
+                      </div>
                     </div>
-                  )
-                }
-              )}
+
+                    <div className="h-2 rounded-full bg-paper overflow-hidden dark:bg-white/10">
+                      <div
+                        className="h-full rounded-full bg-forest-500 dark:bg-gold transition-all duration-500"
+                        style={{
+                          width: `${Math.min(percentage, 100)}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
@@ -838,126 +909,138 @@ function handleExportCSV() {
         {/* TRANSACTIONS */}
         <div className="card overflow-hidden">
           <div className="p-5 sm:p-6 border-b border-paper-line dark:border-white/10">
-            <div className="flex items-center gap-2">
-              <ArrowDownToLine className="h-4.5 w-4.5 text-forest-500 dark:text-gold" />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 shrink-0 rounded-xl bg-forest-50 flex items-center justify-center dark:bg-white/5">
+                  <ArrowDownToLine className="h-4 w-4 text-forest-500 dark:text-gold" />
+                </div>
 
-              <div>
-                <h2 className="font-display font-semibold">
-                  Detail Transaksi
-                </h2>
+                <div>
+                  <h2 className="font-display font-semibold">
+                    Detail Transaksi
+                  </h2>
 
-                <p className="text-xs text-ink-soft mt-1">
-                  {filteredTransactions.length}{' '}
-                  transaksi dalam periode ini
-                </p>
+                  <p className="text-xs text-ink-soft mt-1">
+                    Semua transaksi pada periode yang dipilih.
+                  </p>
+                </div>
               </div>
+
+              <span className="inline-flex w-fit rounded-full bg-paper px-3 py-1 text-xs text-ink-soft dark:bg-white/5">
+                {filteredTransactions.length} transaksi
+              </span>
             </div>
           </div>
 
           {loading ? (
-            <div className="p-8 text-center text-sm text-ink-soft">
-              Memuat laporan...
+            <div className="px-5 py-12 text-center">
+              <div className="h-8 w-8 mx-auto rounded-full border-2 border-forest-200 border-t-forest-500 animate-spin dark:border-white/10 dark:border-t-gold" />
+
+              <p className="text-sm text-ink-soft mt-4">
+                Memuat laporan...
+              </p>
             </div>
           ) : filteredTransactions.length === 0 ? (
-            <div className="p-8 text-center">
-              <FileText className="h-8 w-8 mx-auto text-ink-soft/50 mb-3" />
+            <div className="px-5 py-12 text-center">
+              <div className="h-12 w-12 mx-auto rounded-2xl bg-paper flex items-center justify-center dark:bg-white/5 mb-3">
+                <FileText className="h-5 w-5 text-ink-soft/50" />
+              </div>
 
               <p className="text-sm font-medium">
                 Belum ada transaksi
               </p>
 
-              <p className="text-xs text-ink-soft mt-1">
-                Tidak ada transaksi pada periode yang
-                dipilih.
+              <p className="text-xs text-ink-soft mt-1 max-w-xs mx-auto">
+                Tidak ada transaksi pada periode yang dipilih.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full min-w-[720px] text-sm">
                 <thead>
-                  <tr className="border-b border-paper-line dark:border-white/10 text-left">
-                    <th className="px-5 py-3 font-medium text-ink-soft">
+                  <tr className="border-b border-paper-line bg-paper/40 text-left dark:border-white/10 dark:bg-white/[0.02]">
+                    <th className="px-5 py-3.5 font-medium text-ink-soft">
                       Tanggal
                     </th>
 
-                    <th className="px-5 py-3 font-medium text-ink-soft">
+                    <th className="px-5 py-3.5 font-medium text-ink-soft">
                       Jenis
                     </th>
 
-                    <th className="px-5 py-3 font-medium text-ink-soft">
+                    <th className="px-5 py-3.5 font-medium text-ink-soft">
                       Kategori
                     </th>
 
-                    <th className="px-5 py-3 font-medium text-ink-soft">
+                    <th className="px-5 py-3.5 font-medium text-ink-soft">
                       Catatan
                     </th>
 
-                    <th className="px-5 py-3 font-medium text-ink-soft text-right">
+                    <th className="px-5 py-3.5 font-medium text-ink-soft text-right">
                       Nominal
                     </th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {filteredTransactions.map(
-                    (transaction) => {
-                      const isIncome =
-                        transaction.type === 'income'
+                  {filteredTransactions.map((transaction) => {
+                    const isIncome =
+                      transaction.type === 'income'
 
-                      return (
-                        <tr
-                          key={transaction.id}
-                          className="border-b border-paper-line/70 dark:border-white/5 last:border-0"
-                        >
-                          <td className="px-5 py-3.5 whitespace-nowrap">
-                            {formatDateDisplay(
-                              transaction.transaction_date
-                            )}
-                          </td>
+                    return (
+                      <tr
+                        key={transaction.id}
+                        className="border-b border-paper-line/70 last:border-0 hover:bg-paper/40 dark:border-white/5 dark:hover:bg-white/[0.02]"
+                      >
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          {formatDateDisplay(
+                            transaction.transaction_date
+                          )}
+                        </td>
 
-                          <td className="px-5 py-3.5">
-                            <span
-                              className={
-                                isIncome
-                                  ? 'text-gain'
-                                  : 'text-loss'
-                              }
-                            >
-                              {isIncome
-                                ? 'Pemasukan'
-                                : 'Pengeluaran'}
-                            </span>
-                          </td>
-
-                          <td className="px-5 py-3.5 whitespace-nowrap">
-                            {transaction.categories
-                              ?.name ||
-                              'Tanpa kategori'}
-                          </td>
-
-                          <td className="px-5 py-3.5 text-ink-soft max-w-[220px] truncate">
-                            {transaction.note ||
-                              '-'}
-                          </td>
-
-                          <td
-                            className={`px-5 py-3.5 text-right font-medium whitespace-nowrap ${
+                        <td className="px-5 py-4">
+                          <span
+                            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                               isIncome
-                                ? 'text-gain'
-                                : 'text-loss'
+                                ? 'bg-gain-soft text-gain'
+                                : 'bg-loss-soft text-loss'
                             }`}
                           >
-                            {isIncome ? '+' : '-'}
-                            {formatIDR(
-                              Number(
-                                transaction.amount
-                              )
+                            {isIncome ? (
+                              <TrendingUp className="h-3 w-3" />
+                            ) : (
+                              <TrendingDown className="h-3 w-3" />
                             )}
-                          </td>
-                        </tr>
-                      )
-                    }
-                  )}
+
+                            {isIncome
+                              ? 'Pemasukan'
+                              : 'Pengeluaran'}
+                          </span>
+                        </td>
+
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          {transaction.categories?.name ||
+                            'Tanpa kategori'}
+                        </td>
+
+                        <td className="px-5 py-4 text-ink-soft max-w-[260px] truncate">
+                          {transaction.note || '-'}
+                        </td>
+
+                        <td
+                          className={`px-5 py-4 text-right font-semibold whitespace-nowrap ${
+                            isIncome
+                              ? 'text-gain'
+                              : 'text-loss'
+                          }`}
+                        >
+                          {isIncome ? '+' : '-'}
+                          {formatIDR(
+                            Number(transaction.amount)
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -965,12 +1048,13 @@ function handleExportCSV() {
         </div>
 
         {/* FOOTER INFO */}
-        <div className="text-center pb-2">
+        <div className="rounded-2xl border border-paper-line bg-paper/50 px-4 py-4 text-center dark:border-white/10 dark:bg-white/[0.02]">
           <p className="text-xs text-ink-soft">
-            Laporan dibuat dari data transaksi
-            MoneyTrack pada periode yang dipilih.
+            Laporan dibuat berdasarkan data transaksi MoneyTrack
+            pada periode yang dipilih.
           </p>
         </div>
+
       </div>
     </AppShell>
   )

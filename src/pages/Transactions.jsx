@@ -1,9 +1,16 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import {
+  Plus,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Receipt,
+} from 'lucide-react'
+
 import AppShell from '../components/AppShell'
 import TransactionTable from '../components/TransactionTable'
 import TransactionModal from '../components/TransactionModal'
 import ConfirmDialog from '../components/ConfirmDialog'
+
 import { useTransactions } from '../hooks/useTransactions'
 import { useCategories } from '../hooks/useCategories'
 
@@ -54,56 +61,148 @@ export default function Transactions() {
 
   return (
     <AppShell>
-      {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="font-display text-2xl sm:text-3xl font-semibold">
-          Riwayat Transaksi
-        </h1>
 
-        {/* TOMBOL TAMBAH */}
-        <div className="flex items-center gap-3">
+      {/* ======================================================
+          HEADER
+      ====================================================== */}
+
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-6">
+
+        <div className="min-w-0">
+
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className="h-8 w-8 rounded-lg bg-paper dark:bg-white/5 flex items-center justify-center">
+              <Receipt
+                className="h-4 w-4 text-forest-500 dark:text-gold"
+                strokeWidth={2}
+              />
+            </div>
+
+            <span className="text-xs font-medium text-ink-soft">
+              Catatan keuangan
+            </span>
+          </div>
+
+          <h1 className="font-display text-2xl sm:text-3xl font-semibold">
+            Riwayat Transaksi
+          </h1>
+
+          <p className="text-sm text-ink-soft mt-1">
+            Kelola semua pemasukan dan pengeluaranmu.
+          </p>
+
+        </div>
+
+        {/* ====================================================
+            ACTION BUTTONS
+        ==================================================== */}
+
+        <div className="grid grid-cols-2 gap-2.5 w-full lg:w-auto">
+
+          {/* PENGELUARAN */}
+
           <button
             type="button"
             onClick={() => setAddType('expense')}
-            className="btn-primary text-sm"
+            className="btn-danger justify-center text-sm px-3.5 sm:px-5"
           >
-            <Plus className="h-4 w-4" strokeWidth={2} />
-            <span>Pengeluaran</span>
+            <ArrowDownLeft
+              className="h-4 w-4"
+              strokeWidth={2}
+            />
+
+            <span>
+              Pengeluaran
+            </span>
           </button>
+
+          {/* PEMASUKAN */}
 
           <button
             type="button"
             onClick={() => setAddType('income')}
-            className="btn-primary text-sm"
+            className="btn-primary justify-center text-sm px-3.5 sm:px-5"
           >
-            <Plus className="h-4 w-4" strokeWidth={2} />
-            <span>Pemasukan</span>
+            <ArrowUpRight
+              className="h-4 w-4"
+              strokeWidth={2}
+            />
+
+            <span>
+              Pemasukan
+            </span>
           </button>
+
         </div>
       </div>
 
-      {/* ERROR */}
+      {/* ======================================================
+          ERROR
+      ====================================================== */}
+
       {error && (
-        <p className="text-sm text-loss bg-loss-soft rounded-lg px-3.5 py-2.5 mb-4">
-          {error}
-        </p>
+        <div className="flex items-start gap-2.5 text-sm text-loss bg-loss-soft border border-loss/10 rounded-xl px-3.5 py-3 mb-5">
+          <span className="mt-0.5 shrink-0">⚠️</span>
+
+          <p>
+            {error}
+          </p>
+        </div>
       )}
 
-      {/* TABLE */}
-      {loading ? (
-        <div className="card p-8 text-center text-sm text-ink-soft">
-          Memuat transaksi…
+      {/* ======================================================
+          TRANSACTION COUNT
+      ====================================================== */}
+
+      {!loading && transactions.length > 0 && (
+        <div className="flex items-center justify-between gap-3 mb-3">
+
+          <p className="text-xs sm:text-sm text-ink-soft">
+            Menampilkan{' '}
+            <span className="font-semibold text-ink dark:text-white">
+              {transactions.length}
+            </span>{' '}
+            transaksi
+          </p>
+
         </div>
+      )}
+
+      {/* ======================================================
+          TABLE
+      ====================================================== */}
+
+      {loading ? (
+
+        <div className="card p-10 text-center">
+
+          <div className="flex flex-col items-center">
+
+            <div className="h-10 w-10 rounded-full border-2 border-paper-line dark:border-white/10 border-t-forest-500 dark:border-t-gold animate-spin mb-4" />
+
+            <p className="text-sm text-ink-soft">
+              Memuat transaksi…
+            </p>
+
+          </div>
+
+        </div>
+
       ) : (
+
         <TransactionTable
           transactions={transactions}
           categories={categories}
           onEdit={handleEdit}
           onDelete={setPendingDelete}
         />
+
       )}
 
-      {/* MODAL TAMBAH PEMASUKAN */}
+      {/* ======================================================
+          MODAL TAMBAH PEMASUKAN
+      ====================================================== */}
+
       <TransactionModal
         open={addType === 'income'}
         onClose={() => setAddType(null)}
@@ -112,7 +211,10 @@ export default function Transactions() {
         categories={incomeCategories}
       />
 
-      {/* MODAL TAMBAH PENGELUARAN */}
+      {/* ======================================================
+          MODAL TAMBAH PENGELUARAN
+      ====================================================== */}
+
       <TransactionModal
         open={addType === 'expense'}
         onClose={() => setAddType(null)}
@@ -121,7 +223,10 @@ export default function Transactions() {
         categories={expenseCategories}
       />
 
-      {/* MODAL EDIT */}
+      {/* ======================================================
+          MODAL EDIT
+      ====================================================== */}
+
       <TransactionModal
         open={!!editing}
         onClose={() => setEditing(null)}
@@ -131,7 +236,10 @@ export default function Transactions() {
         initialData={editing}
       />
 
-      {/* KONFIRMASI HAPUS */}
+      {/* ======================================================
+          KONFIRMASI HAPUS
+      ====================================================== */}
+
       <ConfirmDialog
         open={!!pendingDelete}
         title="Hapus transaksi ini?"
@@ -140,6 +248,7 @@ export default function Transactions() {
         onCancel={() => setPendingDelete(null)}
         loading={deleting}
       />
+
     </AppShell>
   )
 }

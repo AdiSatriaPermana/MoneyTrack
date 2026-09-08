@@ -331,29 +331,6 @@ export default function AppShell({ children }) {
                   )
                 )}
 
-                {/* THEME */}
-                <button
-                  type="button"
-                  onClick={toggleTheme}
-                  className="w-full flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium text-ink hover:bg-paper dark:text-white dark:hover:bg-white/5 transition-colors"
-                >
-                  {theme === 'dark' ? (
-                    <Sun
-                      className="h-4.5 w-4.5 text-gold"
-                      strokeWidth={2}
-                    />
-                  ) : (
-                    <Moon
-                      className="h-4.5 w-4.5 text-forest-500"
-                      strokeWidth={2}
-                    />
-                  )}
-
-                  {theme === 'dark'
-                    ? 'Mode terang'
-                    : 'Mode gelap'}
-                </button>
-
                 {/* LOGOUT */}
                 <button
                   type="button"

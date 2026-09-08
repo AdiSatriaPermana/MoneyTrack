@@ -372,18 +372,20 @@ export default function Calendar() {
           RINGKASAN BULAN
       ====================================================== */}
 
-      <div
-        className="
-          grid
-          sm:grid-cols-3
-          gap-4
-          mb-6
-        "
-      >
+    <div 
+      className="
+      grid 
+      sm:grid-cols-3 
+      gap-3 
+      sm:gap-4 
+      mb-5 
+      sm:mb-6
+    "
+    >
 
         {/* PEMASUKAN */}
 
-        <div className="card p-5">
+        <div className="card p-4 sm:p-5">
 
           <div className="flex items-center gap-3">
 
@@ -545,30 +547,32 @@ export default function Calendar() {
           MAIN GRID
       ====================================================== */}
 
-      <div
-        className="
-          grid
-          lg:grid-cols-[1.5fr_1fr]
-          gap-6
-          items-start
-        "
-      >
+<div 
+  className="
+    grid 
+    lg:grid-cols-[1.5fr_1fr] 
+    gap-4 
+    sm:gap-6 
+    items-start
+  "
+>
 
         {/* ====================================================
             CALENDAR
         ==================================================== */}
 
-        <div className="card p-4 sm:p-6">
+        <div className="card p-3 sm:p-6">
 
           {/* HEADER BULAN */}
 
           <div
-            className="
-              flex
-              items-center
-              justify-between
-              mb-5
-            "
+className="
+  flex 
+  items-center 
+  justify-between
+  mb-4 
+  sm:mb-5
+"
           >
 
             <button
@@ -598,7 +602,7 @@ export default function Calendar() {
               <h2
                 className="
                   font-display
-                  text-lg
+                  text-base
                   sm:text-xl
                   font-semibold
                 "
@@ -661,13 +665,15 @@ export default function Calendar() {
             {DAYS.map((day) => (
               <div
                 key={day}
-                className="
-                  text-center
-                  text-xs
-                  font-semibold
-                  text-ink-soft
-                  py-2
-                "
+className="
+  text-center 
+  text-[10px] 
+  sm:text-xs 
+  font-semibold 
+  text-ink-soft 
+  py-1.5 
+  sm:py-2
+"
               >
                 {day}
               </div>
@@ -709,7 +715,7 @@ export default function Calendar() {
                       <div
                         key={`empty-${index}`}
                         className="
-                          min-h-[72px]
+                          min-h-[56px]
                           sm:min-h-[88px]
                         "
                       />
@@ -759,12 +765,14 @@ export default function Calendar() {
                       }
                       className={`
                         relative
-                        min-h-[72px]
+                        min-h-[56px]
                         sm:min-h-[88px]
-                        rounded-xl
-                        p-2
-                        text-left
-                        border
+rounded-lg 
+sm:rounded-xl 
+p-1.5 
+sm:p-2 
+text-left 
+border
                         transition-all
                         ${
                           isSelected
@@ -788,8 +796,10 @@ export default function Calendar() {
 
                         <span
                           className={`
-                            h-7
-                            w-7
+                            h-6 
+w-6 
+sm:h-7 
+sm:w-7 
                             rounded-full
                             flex
                             items-center
@@ -816,7 +826,7 @@ export default function Calendar() {
 
                       {dayTransactions.length > 0 && (
 
-                        <div className="mt-3 space-y-1">
+                        <div className="mt-2 sm:mt-3 space-y-0.5 sm:space-y-1">
 
                           {hasIncome && (
                             <div
@@ -969,7 +979,7 @@ export default function Calendar() {
             DETAIL TANGGAL
         ==================================================== */}
 
-        <div className="card p-5 sm:p-6">
+        <div className="card p-4 sm:p-6">
 
           <div className="mb-5">
 
@@ -1003,12 +1013,12 @@ export default function Calendar() {
           {/* RINGKASAN HARI */}
 
           <div
-            className="
-              grid
-              grid-cols-2
-              gap-3
-              mb-5
-            "
+grid 
+grid-cols-2 
+gap-2 
+sm:gap-3 
+mb-4 
+sm:mb-5
           >
 
             <div
@@ -1283,7 +1293,6 @@ export default function Calendar() {
                 )}
 
               </div>
-
 
               {/* SALDO HARI */}
 
